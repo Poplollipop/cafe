@@ -12,4 +12,6 @@ public interface UserService {
     // 返回一個 ResponseEntity 物件，封裝了註冊結果的訊息及 HTTP 狀態碼
     ResponseEntity<String> signUp(Map<String, String> requestMap);
 
+    ResponseEntity<String> login(Map<String, String> requestMap);
+
 }

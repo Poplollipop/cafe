@@ -6,11 +6,16 @@ import java.util.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import com.cafe.demo.JWT.JwtUtils;
 import com.cafe.demo.POJO.User;
 import com.cafe.demo.constents.CafeConstents;
 import com.cafe.demo.dao.UserDao;
+import com.cafe.demo.service.CustomerUserDetailService;
 import com.cafe.demo.service.UserService;
 import com.cafe.demo.utils.CafeUtils;
 
@@ -22,6 +27,15 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserDao userDao; // 注入UserDao，操作資料庫
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    CustomerUserDetailService customerUserDetailService;
+
+    @Autowired
+    JwtUtils jwtUtils;
 
     @Override
     public ResponseEntity<String> signUp(Map<String, String> requestMap) {
@@ -69,5 +83,26 @@ public class UserServiceImpl implements UserService {
         user.setStatus("false"); // 設定狀態為未啟用
         user.setRole("user"); // 設定角色為普通使用者
         return user; // 返回建立的User
+    }
+
+    @Override
+    public ResponseEntity<String> login(Map<String, String> requestMap) {
+        log.info("Inside login");
+        try {
+            Authentication auth = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(requestMap.get("email"), requestMap.get("password")));
+            if (auth.isAuthenticated()) {
+                if (customerUserDetailService.getUserDetail().getStatus().equalsIgnoreCase("true")) {
+                    return new ResponseEntity<String>(
+                            "{\"token\":\"" + jwtUtils.generatedToken(
+                                    customerUserDetailService.getUserDetail().getEmail(),
+                                    customerUserDetailService.getUserDetail().getRole()) + "\"}",
+                            HttpStatus.OK);
+                }
+            }
+        } catch (Exception e) {
+            log.error("{}", e);
+        }
+        return null;
     }
 }
