@@ -110,25 +110,33 @@ public class UserServiceImpl implements UserService {
             // 認證使用者的 Email 和密碼
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(requestMap.get("email"), requestMap.get("password")));
+            
             if (auth.isAuthenticated()) { // 如果認證成功
+                String status = customerUserDetailService.getUserDetail().getStatus();
+                log.info("User status: {}", status); // 記錄使用者狀態
+                
                 // 驗證使用者狀態是否已啟用
-                if (customerUserDetailService.getUserDetail().getStatus().equalsIgnoreCase("true")) {
-                    // 生成 JWT Token 並返回
-                    return new ResponseEntity<String>(
-                            "{\"token\":\"" + jwtUtils.generatedToken(
-                                    customerUserDetailService.getUserDetail().getEmail(),
-                                    customerUserDetailService.getUserDetail().getRole()) + "\"}",
-                            HttpStatus.OK);
+                if ("true".equalsIgnoreCase(status)) {
+                    // 使用者已啟用，生成 JWT Token 並返回
+                    String token = jwtUtils.generatedToken(
+                            customerUserDetailService.getUserDetail().getEmail(),
+                            customerUserDetailService.getUserDetail().getRole());
+                    log.info("JWT Token generated for user: {}", requestMap.get("email"));
+                    return new ResponseEntity<String>("{\"token\":\"" + token + "\"}", HttpStatus.OK);
+                } else {
+                    // 使用者未啟用，返回待管理員審批的提示
+                    log.warn("User {} status is not active, waiting for admin approval.", requestMap.get("email"));
+                    return new ResponseEntity<String>("{\"message\":\"Waiting for admin approval\"}", HttpStatus.BAD_REQUEST);
                 }
             } else {
-                // 如果使用者未經管理員批准，返回提示
-                return new ResponseEntity<String>("{\"message\":\"" + "Waiting for admin approval" + "\"}",
-                        HttpStatus.BAD_REQUEST);
+                // 如果認證未通過，返回錯誤訊息
+                log.warn("Authentication failed for user: {}", requestMap.get("email"));
+                return new ResponseEntity<String>("{\"message\":\"Bad Credentials\"}", HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
-            log.error("{}", e); // 記錄錯誤
+            // 捕獲異常並記錄錯誤
+            log.error("Exception occurred during login: ", e);
+            return new ResponseEntity<String>("{\"message\":\"An error occurred during login\"}", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<String>("{\"message\":\"" + "Bad Credentials" + "\"}",
-        HttpStatus.BAD_REQUEST);
     }
 }
