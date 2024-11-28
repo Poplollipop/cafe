@@ -1,8 +1,11 @@
 package com.cafe.demo.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+
+import com.cafe.demo.wrapper.UserWrapper;
 
 // 定義 UserService 介面，該介面負責處理與用戶相關的業務邏輯
 public interface UserService {
@@ -13,5 +16,7 @@ public interface UserService {
     ResponseEntity<String> signUp(Map<String, String> requestMap);
 
     ResponseEntity<String> login(Map<String, String> requestMap);
+
+    ResponseEntity<List<UserWrapper>> getAllUser();
 
 }

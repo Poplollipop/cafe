@@ -1,5 +1,7 @@
 package com.cafe.demo.serviceImpl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -18,6 +20,7 @@ import com.cafe.demo.dao.UserDao;
 import com.cafe.demo.service.CustomerUserDetailService;
 import com.cafe.demo.service.UserService;
 import com.cafe.demo.utils.CafeUtils;
+import com.cafe.demo.wrapper.UserWrapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -138,5 +141,15 @@ public class UserServiceImpl implements UserService {
             log.error("Exception occurred during login: ", e);
             return new ResponseEntity<String>("{\"message\":\"An error occurred during login\"}", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Override
+    public ResponseEntity<List<UserWrapper>> getAllUser() {
+       try {
+           
+       } catch (Exception e) {
+        e.printStackTrace();
+       }
+        return new ResponseEntity<>(new ArrayList<>(),HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -1,5 +1,7 @@
 package com.cafe.demo.restImpl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import com.cafe.demo.constents.CafeConstents; // 引入常量類，用於定義�
 import com.cafe.demo.rest.UserRest; // 引入UserRest接口，用於定義RESTful接口
 import com.cafe.demo.service.UserService; // 引入UserService服務，用於處理業務邏輯
 import com.cafe.demo.utils.CafeUtils; // 引入工具類，用於公共方法和返回格式處理
+import com.cafe.demo.wrapper.UserWrapper;
 
 @RestController // 標註此類為REST控制器，讓Spring能自動識別並處理HTTP請求
 public class UserRestImpl implements UserRest { // 實現UserRest接口，具體處理用戶註冊功能
@@ -39,5 +42,15 @@ public class UserRestImpl implements UserRest { // 實現UserRest接口，具體
         e.printStackTrace();
         }
         return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<List<UserWrapper>> getAllUser() {
+        try {
+            return userService.getAllUser();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+       return new ResponseEntity<List<UserWrapper>>(new ArrayList<>(),HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
