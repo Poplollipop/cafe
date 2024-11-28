@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserWrapper {
 
-    UserWrapper user = new com.cafe.demo.wrapper.UserWrapper(1,"Li","123@gmail.com","1234567890","false");
-
     private Integer id;
 
     private String name;

@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import com.cafe.demo.JWT.JwtFilter;
 import com.cafe.demo.JWT.JwtUtils;
 import com.cafe.demo.POJO.User;
 import com.cafe.demo.constents.CafeConstents;
@@ -45,6 +46,9 @@ public class UserServiceImpl implements UserService {
     // 注入 JWT 工具類，負責生成和驗證 Token
     @Autowired
     JwtUtils jwtUtils;
+
+    @Autowired
+    JwtFilter jwtFilter;
 
     /**
      * 註冊新使用者
@@ -146,7 +150,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<List<UserWrapper>> getAllUser() {
        try {
-           
+           if(jwtFilter.isAdmin()){
+            
+           }else{
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.UNAUTHORIZED);
+           }
        } catch (Exception e) {
         e.printStackTrace();
        }

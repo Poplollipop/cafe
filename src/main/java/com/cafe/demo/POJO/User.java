@@ -17,8 +17,10 @@ import lombok.Data;
 // 命名查詢，定義一個名為"User.findByEmailId"的查詢，通過email查找用戶
 @NamedQuery(name = "User.findByEmailId", query = "select u from User u where u.email=:email")
 
-@NamedQuery(name = "User.getAllUser", query = "select new package com.cafe.demo.wrapper.UserWrapper() from User u where u.role='user'")
-
+@NamedQuery(
+    name = "User.getAllUser", 
+    query = "select new com.cafe.demo.wrapper.UserWrapper(u.id, u.name, u.email, u.contactNumber, u.status) from User u where u.role='user'"
+)
 @Data // Lombok註解，會自動生成getter, setter, toString, equals, hashCode等方法
 @Entity // 標註該類為JPA實體類，對應到資料庫中的一張表
 @DynamicUpdate // 表示只更新有變更的列，而不是更新整個實體
