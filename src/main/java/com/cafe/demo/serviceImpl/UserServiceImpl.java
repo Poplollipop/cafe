@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import com.cafe.demo.dao.UserDao;
 import com.cafe.demo.service.CustomerUserDetailService;
 import com.cafe.demo.service.UserService;
 import com.cafe.demo.utils.CafeUtils;
+import com.cafe.demo.utils.EmailUtils;
 import com.cafe.demo.wrapper.UserWrapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +51,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     JwtFilter jwtFilter;
+
+    @Autowired
+    EmailUtils emailUtils;
 
     /**
      * 註冊新使用者
@@ -117,11 +122,11 @@ public class UserServiceImpl implements UserService {
             // 認證使用者的 Email 和密碼
             Authentication auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(requestMap.get("email"), requestMap.get("password")));
-            
+
             if (auth.isAuthenticated()) { // 如果認證成功
                 String status = customerUserDetailService.getUserDetail().getStatus();
                 log.info("User status: {}", status); // 記錄使用者狀態
-                
+
                 // 驗證使用者狀態是否已啟用
                 if ("true".equalsIgnoreCase(status)) {
                     // 使用者已啟用，生成 JWT Token 並返回
@@ -143,21 +148,91 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             // 捕獲異常並記錄錯誤
             log.error("Exception occurred during login: ", e);
-            return new ResponseEntity<String>("{\"message\":\"An error occurred during login\"}", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<String>("{\"message\":\"An error occurred during login\"}",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
-    public ResponseEntity<List<UserWrapper>> getAllUser() {
-       try {
-           if(jwtFilter.isAdmin()){
-            return new ResponseEntity<>(userDao.getAllUser(),HttpStatus.OK);
-           }else{
+public ResponseEntity<List<UserWrapper>> getAllUser() {
+    try {
+        // 檢查當前用戶是否為管理員
+        if (jwtFilter.isAdmin()) {
+            // 如果是管理員，返回所有用戶的列表，狀態為 HTTP 200
+            return new ResponseEntity<>(userDao.getAllUser(), HttpStatus.OK);
+        } else {
+            // 如果不是管理員，返回空列表，狀態為 HTTP 401 (未授權)
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.UNAUTHORIZED);
-           }
-       } catch (Exception e) {
+        }
+    } catch (Exception e) {
+        // 捕捉異常並打印堆疊資訊
         e.printStackTrace();
-       }
-        return new ResponseEntity<>(new ArrayList<>(),HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    // 如果出現異常，返回空列表，狀態為 HTTP 500 (伺服器內部錯誤)
+    return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+}
+
+@Override
+public ResponseEntity<String> update(Map<String, String> requestMap) {
+    try {
+        // 檢查當前用戶是否為管理員
+        if (jwtFilter.isAdmin()) {
+            // 根據請求中的 ID 查找用戶
+            Optional<User> op = userDao.findById(Integer.parseInt(requestMap.get("id")));
+            if (!op.isEmpty()) {
+                // 更新用戶的狀態
+                userDao.updateStatus(requestMap.get("status"), Integer.parseInt(requestMap.get("id")));
+
+                // 通知所有管理員用戶狀態的變更
+                sendMailToAllAdmin(requestMap.get("status"), op.get().getEmail(), userDao.getAllAdmin());
+
+                // 返回成功響應，狀態為 HTTP 200
+                return CafeUtils.getResponseEntity("使用者狀態更新成功！", HttpStatus.OK);
+            } else {
+                // 如果用戶不存在，返回對應訊息
+                return CafeUtils.getResponseEntity("使用者id，並不存在", HttpStatus.OK);
+            }
+        } else {
+            // 如果當前用戶不是管理員，返回未授權響應
+            return CafeUtils.getResponseEntity(CafeConstents.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+        }
+    } catch (Exception e) {
+        // 捕捉異常並打印堆疊資訊
+        e.printStackTrace();
+    }
+    // 如果出現異常，返回伺服器內部錯誤
+    return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+}
+
+/**
+ * 發送通知郵件給所有管理員
+ * 
+ * @param status 用戶的啟用狀態
+ * @param user 被更新狀態的用戶郵箱
+ * @param allAdmin 管理員的郵箱列表
+ */
+private void sendMailToAllAdmin(String status, String user, List<String> allAdmin) {
+    // 移除當前管理員的郵箱，避免自己給自己發郵件
+    allAdmin.remove(jwtFilter.getCurrentUser());
+
+    // 判斷用戶是否啟用
+    if (status != null && status.equalsIgnoreCase("true")) {
+        // 如果啟用，發送啟用通知郵件
+        emailUtils.sendSimpleMessage(
+            jwtFilter.getCurrentUser(), 
+            "帳號啟用", 
+            "使用者： " + user + " \n 啟用 \n 管理員：" + jwtFilter.getCurrentUser(), 
+            allAdmin
+        );
+    } else {
+        // 如果未啟用，發送未啟用通知郵件
+        emailUtils.sendSimpleMessage(
+            jwtFilter.getCurrentUser(), 
+            "帳號未啟用", 
+            "使用者： " + user + " \n 未啟用 \n 管理員：" + jwtFilter.getCurrentUser(), 
+            allAdmin
+        );
+    }
+}
+
 }

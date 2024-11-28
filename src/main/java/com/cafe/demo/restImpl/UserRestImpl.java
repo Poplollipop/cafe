@@ -3,13 +3,17 @@ package com.cafe.demo.restImpl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cafe.demo.JWT.JwtFilter;
+import com.cafe.demo.POJO.User;
 import com.cafe.demo.constents.CafeConstents; // 引入常量類，用於定義系統中的常量
+import com.cafe.demo.dao.UserDao;
 import com.cafe.demo.rest.UserRest; // 引入UserRest接口，用於定義RESTful接口
 import com.cafe.demo.service.UserService; // 引入UserService服務，用於處理業務邏輯
 import com.cafe.demo.utils.CafeUtils; // 引入工具類，用於公共方法和返回格式處理
@@ -20,6 +24,12 @@ public class UserRestImpl implements UserRest { // 實現UserRest接口，具體
 
     @Autowired
     UserService userService; // 注入UserService服務，用於調用註冊邏輯
+
+    @Autowired
+    JwtFilter jwtFilter;
+
+    @Autowired
+    UserDao userDao;
 
     @Override
     public ResponseEntity<String> signUp(Map<String, String> requestMap) { // 實現UserRest接口中的signUp方法，處理用戶註冊
@@ -52,5 +62,15 @@ public class UserRestImpl implements UserRest { // 實現UserRest接口，具體
             e.printStackTrace();
         }
        return new ResponseEntity<List<UserWrapper>>(new ArrayList<>(),HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<String> update(Map<String, String> requestMap) {
+        try {
+            return userService.update(requestMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
