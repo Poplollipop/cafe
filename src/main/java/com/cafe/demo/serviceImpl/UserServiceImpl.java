@@ -133,12 +133,12 @@ public class UserServiceImpl implements UserService {
                 } else {
                     // 使用者未啟用，返回待管理員審批的提示
                     log.warn("User {} status is not active, waiting for admin approval.", requestMap.get("email"));
-                    return new ResponseEntity<String>("{\"message\":\"Waiting for admin approval\"}", HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity<String>("{\"message\":\"等待管理員授權！\"}", HttpStatus.BAD_REQUEST);
                 }
             } else {
                 // 如果認證未通過，返回錯誤訊息
                 log.warn("Authentication failed for user: {}", requestMap.get("email"));
-                return new ResponseEntity<String>("{\"message\":\"Bad Credentials\"}", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<String>("{\"message\":\"驗證失敗！\"}", HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
             // 捕獲異常並記錄錯誤
@@ -151,7 +151,7 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<List<UserWrapper>> getAllUser() {
        try {
            if(jwtFilter.isAdmin()){
-            
+            return new ResponseEntity<>(userDao.getAllUser(),HttpStatus.OK);
            }else{
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.UNAUTHORIZED);
            }
