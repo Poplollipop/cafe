@@ -104,6 +104,7 @@ public class JwtFilter extends OncePerRequestFilter {
      * @return 當前用戶名
      */
     public String getCurrentUser() {
+        System.out.println("Current username: " + username);
         return username;
     }
 

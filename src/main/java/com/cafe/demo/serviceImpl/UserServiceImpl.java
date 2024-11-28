@@ -154,85 +154,113 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-public ResponseEntity<List<UserWrapper>> getAllUser() {
-    try {
-        // 檢查當前用戶是否為管理員
-        if (jwtFilter.isAdmin()) {
-            // 如果是管理員，返回所有用戶的列表，狀態為 HTTP 200
-            return new ResponseEntity<>(userDao.getAllUser(), HttpStatus.OK);
-        } else {
-            // 如果不是管理員，返回空列表，狀態為 HTTP 401 (未授權)
-            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.UNAUTHORIZED);
-        }
-    } catch (Exception e) {
-        // 捕捉異常並打印堆疊資訊
-        e.printStackTrace();
-    }
-    // 如果出現異常，返回空列表，狀態為 HTTP 500 (伺服器內部錯誤)
-    return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
-}
-
-@Override
-public ResponseEntity<String> update(Map<String, String> requestMap) {
-    try {
-        // 檢查當前用戶是否為管理員
-        if (jwtFilter.isAdmin()) {
-            // 根據請求中的 ID 查找用戶
-            Optional<User> op = userDao.findById(Integer.parseInt(requestMap.get("id")));
-            if (!op.isEmpty()) {
-                // 更新用戶的狀態
-                userDao.updateStatus(requestMap.get("status"), Integer.parseInt(requestMap.get("id")));
-
-                // 通知所有管理員用戶狀態的變更
-                sendMailToAllAdmin(requestMap.get("status"), op.get().getEmail(), userDao.getAllAdmin());
-
-                // 返回成功響應，狀態為 HTTP 200
-                return CafeUtils.getResponseEntity("使用者狀態更新成功！", HttpStatus.OK);
+    public ResponseEntity<List<UserWrapper>> getAllUser() {
+        try {
+            // 檢查當前用戶是否為管理員
+            if (jwtFilter.isAdmin()) {
+                // 如果是管理員，返回所有用戶的列表，狀態為 HTTP 200
+                return new ResponseEntity<>(userDao.getAllUser(), HttpStatus.OK);
             } else {
-                // 如果用戶不存在，返回對應訊息
-                return CafeUtils.getResponseEntity("使用者id，並不存在", HttpStatus.OK);
+                // 如果不是管理員，返回空列表，狀態為 HTTP 401 (未授權)
+                return new ResponseEntity<>(new ArrayList<>(), HttpStatus.UNAUTHORIZED);
             }
-        } else {
-            // 如果當前用戶不是管理員，返回未授權響應
-            return CafeUtils.getResponseEntity(CafeConstents.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+        } catch (Exception e) {
+            // 捕捉異常並打印堆疊資訊
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        // 捕捉異常並打印堆疊資訊
-        e.printStackTrace();
+        // 如果出現異常，返回空列表，狀態為 HTTP 500 (伺服器內部錯誤)
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    // 如果出現異常，返回伺服器內部錯誤
-    return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
-}
 
-/**
- * 發送通知郵件給所有管理員
- * 
- * @param status 用戶的啟用狀態
- * @param user 被更新狀態的用戶郵箱
- * @param allAdmin 管理員的郵箱列表
- */
-private void sendMailToAllAdmin(String status, String user, List<String> allAdmin) {
-    // 移除當前管理員的郵箱，避免自己給自己發郵件
-    allAdmin.remove(jwtFilter.getCurrentUser());
+    @Override
+    public ResponseEntity<String> update(Map<String, String> requestMap) {
+        try {
+            // 檢查當前用戶是否為管理員
+            if (jwtFilter.isAdmin()) {
+                // 根據請求中的 ID 查找用戶
+                Optional<User> op = userDao.findById(Integer.parseInt(requestMap.get("id")));
+                if (!op.isEmpty()) {
+                    // 更新用戶的狀態
+                    userDao.updateStatus(requestMap.get("status"), Integer.parseInt(requestMap.get("id")));
 
-    // 判斷用戶是否啟用
-    if (status != null && status.equalsIgnoreCase("true")) {
-        // 如果啟用，發送啟用通知郵件
-        emailUtils.sendSimpleMessage(
-            jwtFilter.getCurrentUser(), 
-            "帳號啟用", 
-            "使用者： " + user + " \n 啟用 \n 管理員：" + jwtFilter.getCurrentUser(), 
-            allAdmin
-        );
-    } else {
-        // 如果未啟用，發送未啟用通知郵件
-        emailUtils.sendSimpleMessage(
-            jwtFilter.getCurrentUser(), 
-            "帳號未啟用", 
-            "使用者： " + user + " \n 未啟用 \n 管理員：" + jwtFilter.getCurrentUser(), 
-            allAdmin
-        );
+                    // 通知所有管理員用戶狀態的變更
+                    sendMailToAllAdmin(requestMap.get("status"), op.get().getEmail(), userDao.getAllAdmin());
+
+                    // 返回成功響應，狀態為 HTTP 200
+                    return CafeUtils.getResponseEntity("使用者狀態更新成功！", HttpStatus.OK);
+                } else {
+                    // 如果用戶不存在，返回對應訊息
+                    return CafeUtils.getResponseEntity("使用者id，並不存在", HttpStatus.OK);
+                }
+            } else {
+                // 如果當前用戶不是管理員，返回未授權響應
+                return CafeUtils.getResponseEntity(CafeConstents.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+            }
+        } catch (Exception e) {
+            // 捕捉異常並打印堆疊資訊
+            e.printStackTrace();
+        }
+        // 如果出現異常，返回伺服器內部錯誤
+        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-}
+
+    /**
+     * 發送通知郵件給所有管理員
+     * 
+     * @param status   用戶的啟用狀態
+     * @param user     被更新狀態的用戶郵箱
+     * @param allAdmin 管理員的郵箱列表
+     */
+    private void sendMailToAllAdmin(String status, String user, List<String> allAdmin) {
+        // 移除當前管理員的郵箱，避免自己給自己發郵件
+        allAdmin.remove(jwtFilter.getCurrentUser());
+
+        // 判斷用戶是否啟用
+        if (status != null && status.equalsIgnoreCase("true")) {
+            // 如果啟用，發送啟用通知郵件
+            emailUtils.sendSimpleMessage(
+                    jwtFilter.getCurrentUser(),
+                    "帳號啟用",
+                    "使用者： " + user + " \n 啟用 \n 管理員：" + jwtFilter.getCurrentUser(),
+                    allAdmin);
+        } else {
+            // 如果未啟用，發送未啟用通知郵件
+            emailUtils.sendSimpleMessage(
+                    jwtFilter.getCurrentUser(),
+                    "帳號未啟用",
+                    "使用者： " + user + " \n 未啟用 \n 管理員：" + jwtFilter.getCurrentUser(),
+                    allAdmin);
+        }
+    }
+
+    @Override
+    public ResponseEntity<String> checkToken() {
+        return CafeUtils.getResponseEntity("true", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<String> changePassword(Map<String, String> requestMap) {
+        try {
+            // 檢查 JWT token 是否有效
+            String currentUserEmail = jwtFilter.getCurrentUser();
+            System.out.println("Current User Email: " + currentUserEmail); // 確認返回值
+            if (currentUserEmail == null) {
+                return CafeUtils.getResponseEntity("Token 缺失或無效", HttpStatus.UNAUTHORIZED);
+            }
+            User user = userDao.findByEmail(jwtFilter.getCurrentUser());
+            if (user != null) {
+                if (user.getPassword().equals(requestMap.get("oldPassword"))) {
+                    user.setPassword(requestMap.get("newPassword"));
+                    userDao.save(user);
+                    return CafeUtils.getResponseEntity("密碼更新成功！", HttpStatus.OK);
+                }
+                return CafeUtils.getResponseEntity("舊密碼不正確！", HttpStatus.BAD_REQUEST);
+            }
+            return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
 }
