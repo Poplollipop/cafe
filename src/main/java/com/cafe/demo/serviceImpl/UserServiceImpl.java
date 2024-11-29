@@ -24,6 +24,7 @@ import com.cafe.demo.service.UserService;
 import com.cafe.demo.utils.CafeUtils;
 import com.cafe.demo.utils.EmailUtils;
 import com.cafe.demo.wrapper.UserWrapper;
+import com.google.common.base.Strings;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -257,6 +258,19 @@ public class UserServiceImpl implements UserService {
                 return CafeUtils.getResponseEntity("舊密碼不正確！", HttpStatus.BAD_REQUEST);
             }
             return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<String> forgotPassword(Map<String, String> requestMap) {
+        try {
+            User user = userDao.findByEmail(requestMap.get("email"));
+            if (!Objects.isNull(user) && !Strings.isNullOrEmpty(user.getEmail()))
+                emailUtils.forgotMail(user.getEmail(), "來自管理系統的驗證", user.getPassword());
+            return CafeUtils.getResponseEntity("檢查你的認證信箱", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
         }

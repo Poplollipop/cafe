@@ -20,18 +20,21 @@ public interface UserRest {
     // requestMap包含註冊所需的資料，例如用戶名、密碼等
 
     @PostMapping(path = "/login")
-    public ResponseEntity<String> login(@RequestBody (required=true) Map<String,String> requestMap);
+    public ResponseEntity<String> login(@RequestBody(required = true) Map<String, String> requestMap);
 
-    @GetMapping(path="/get")
+    @GetMapping(path = "/get")
     public ResponseEntity<List<UserWrapper>> getAllUser();
 
-    @PostMapping(path="/update")
-    public ResponseEntity<String> update(@RequestBody (required = true) Map<String,String> requestMap);
+    @PostMapping(path = "/update")
+    public ResponseEntity<String> update(@RequestBody(required = true) Map<String, String> requestMap);
 
-    @GetMapping(path="/checkToken")
+    @GetMapping(path = "/checkToken")
     ResponseEntity<String> checkToken();
 
-    @PostMapping(path="/changePassword")
-    ResponseEntity<String> changePassword(@RequestBody Map<String,String> requestMap);
+    @PostMapping(path = "/changePassword")
+    ResponseEntity<String> changePassword(@RequestBody Map<String, String> requestMap);
+
+    @PostMapping(path = "/forgotPassword")
+    ResponseEntity<String> forgotPassword(@RequestBody Map<String, String> requestMap);
 
 }
