@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             // 捕獲異常並記錄錯誤
             log.error("Exception occurred during login: ", e);
-            return new ResponseEntity<String>("{\"message\":\"An error occurred during login\"}",
+            return new ResponseEntity<String>("{\"message\":\"登入發生錯誤！\"}",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
