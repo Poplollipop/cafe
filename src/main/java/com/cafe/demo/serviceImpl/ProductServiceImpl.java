@@ -32,39 +32,38 @@ public class ProductServiceImpl implements ProductService {
             }
             if (validateProductMap(requestMap, false)) {
                 productDao.save(getProductFromMap(requestMap, false));
-                                return CafeUtils.getResponseEntity("",HttpStatus.OK);
-                            }
-                            return CafeUtils.getResponseEntity(CafeConstents.INVALID_DATA,HttpStatus.BAD_REQUEST);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
-                    }
+                return CafeUtils.getResponseEntity("產品新增成功！", HttpStatus.OK);
+            }
+            return CafeUtils.getResponseEntity(CafeConstents.INVALID_DATA, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     private Product getProductFromMap(Map<String, String> requestMap, boolean isAdded) {
-                    Category category= new Category();
-                    category.setId(Integer.parseInt(requestMap.get("categoryId")));
-                    Product product = new Product();
-                    if(isAdded){
-                        product.setId(Integer.parseInt(requestMap.get("id")));
-                    }else{
-                        product.setStatus("true");
-                    }
-                    product.setCategory(category);
-                    product.setName(requestMap.get("name"));
-                    product.setDescription(requestMap.get("description"));
-                    product.setPrice(Integer.parseInt("price"));
-                    return product;
-                    }
+        Category category = new Category();
+        category.setId(Integer.parseInt(requestMap.get("categoryId")));
+        Product product = new Product();
+        if (isAdded) {
+            product.setId(Integer.parseInt(requestMap.get("id")));
+        } else {
+            product.setStatus("true");
+        }
+        product.setCategory(category);
+        product.setName(requestMap.get("name"));
+        product.setDescription(requestMap.get("description"));
+        product.setPrice(Integer.parseInt(requestMap.get("price")));
+        return product;
+    }
 
     private boolean validateProductMap(Map<String, String> requestMap, boolean validateId) {
-        if (requestMap.containsKey("name") && validateId) {
-            if (requestMap.containsKey("id")) {
-                return true;
-            } else if (!validateId) {
-                return true;
-
+        // 檢查必要欄位是否存在
+        if (requestMap.containsKey("name") && requestMap.containsKey("categoryId") && requestMap.containsKey("price")) {
+            if (validateId && !requestMap.containsKey("id")) {
+                return false; // 如果需要id，但沒有提供，返回false
             }
+            return true;
         }
         return false;
     }
