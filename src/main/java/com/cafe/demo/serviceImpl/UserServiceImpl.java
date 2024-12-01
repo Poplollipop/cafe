@@ -242,38 +242,56 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<String> changePassword(Map<String, String> requestMap) {
         try {
-            // 檢查 JWT token 是否有效
+            // 檢查 JWT token 是否有效，取得當前用戶的電子郵件
             String currentUserEmail = jwtFilter.getCurrentUser();
-            System.out.println("Current User Email: " + currentUserEmail); // 確認返回值
+            System.out.println("Current User Email: " + currentUserEmail); // 輸出當前用戶的郵箱確認值
+
+            // 如果當前用戶的電子郵件為空，表示 Token 缺失或無效，返回未授權錯誤
             if (currentUserEmail == null) {
                 return CafeUtils.getResponseEntity("Token 缺失或無效", HttpStatus.UNAUTHORIZED);
             }
+
+            // 根據當前用戶的電子郵件從資料庫查找用戶
             User user = userDao.findByEmail(jwtFilter.getCurrentUser());
+
+            // 如果用戶存在
             if (user != null) {
+                // 檢查提供的舊密碼是否正確
                 if (user.getPassword().equals(requestMap.get("oldPassword"))) {
+                    // 如果舊密碼正確，更新為新密碼並保存
                     user.setPassword(requestMap.get("newPassword"));
                     userDao.save(user);
                     return CafeUtils.getResponseEntity("密碼更新成功！", HttpStatus.OK);
                 }
+                // 如果舊密碼不正確，返回錯誤提示
                 return CafeUtils.getResponseEntity("舊密碼不正確！", HttpStatus.BAD_REQUEST);
             }
+
+            // 如果找不到用戶，返回內部伺服器錯誤
             return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // 印出錯誤信息
         }
+        // 如果發生異常，返回內部伺服器錯誤
         return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
     public ResponseEntity<String> forgotPassword(Map<String, String> requestMap) {
         try {
+            // 根據提供的電子郵件查找用戶
             User user = userDao.findByEmail(requestMap.get("email"));
+
+            // 如果用戶存在且電子郵件有效，發送忘記密碼郵件
             if (!Objects.isNull(user) && !Strings.isNullOrEmpty(user.getEmail()))
                 emailUtils.forgotMail(user.getEmail(), "來自管理系統的驗證", user.getPassword());
+
+            // 返回提示用戶檢查認證信箱
             return CafeUtils.getResponseEntity("檢查你的認證信箱", HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // 印出錯誤信息
         }
+        // 如果發生異常，返回內部伺服器錯誤
         return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

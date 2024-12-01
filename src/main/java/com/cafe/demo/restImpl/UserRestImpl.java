@@ -44,62 +44,80 @@ public class UserRestImpl implements UserRest { // 實現UserRest接口，具體
     }
 
     @Override
-    public ResponseEntity<String> login(Map<String, String> requestMap) {
-        try {
-            return userService.login(requestMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+public ResponseEntity<String> login(Map<String, String> requestMap) {
+    try {
+        // 呼叫 userService 的 login 方法進行用戶登入
+        return userService.login(requestMap);
+    } catch (Exception e) {
+        // 如果發生異常，印出錯誤訊息
+        e.printStackTrace();
     }
+    // 如果發生錯誤，返回內部伺服器錯誤的回應
+    return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+}
 
-    @Override
-    public ResponseEntity<List<UserWrapper>> getAllUser() {
-        try {
-            return userService.getAllUser();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ResponseEntity<List<UserWrapper>>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+@Override
+public ResponseEntity<List<UserWrapper>> getAllUser() {
+    try {
+        // 呼叫 userService 的 getAllUser 方法取得所有用戶資料
+        return userService.getAllUser();
+    } catch (Exception e) {
+        // 如果發生異常，印出錯誤訊息
+        e.printStackTrace();
     }
+    // 如果發生錯誤，返回空的用戶列表並設置 HTTP 狀態為內部伺服器錯誤
+    return new ResponseEntity<List<UserWrapper>>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+}
 
-    @Override
-    public ResponseEntity<String> update(Map<String, String> requestMap) {
-        try {
-            return userService.update(requestMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+@Override
+public ResponseEntity<String> update(Map<String, String> requestMap) {
+    try {
+        // 呼叫 userService 的 update 方法更新用戶資料
+        return userService.update(requestMap);
+    } catch (Exception e) {
+        // 如果發生異常，印出錯誤訊息
+        e.printStackTrace();
     }
+    // 如果發生錯誤，返回內部伺服器錯誤的回應
+    return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+}
 
-    @Override
-    public ResponseEntity<String> checkToken() {
-        try {
-            return userService.checkToken();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+@Override
+public ResponseEntity<String> checkToken() {
+    try {
+        // 呼叫 userService 的 checkToken 方法檢查令牌
+        return userService.checkToken();
+    } catch (Exception e) {
+        // 如果發生異常，印出錯誤訊息
+        e.printStackTrace();
     }
+    // 如果發生錯誤，返回內部伺服器錯誤的回應
+    return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+}
 
-    @Override
-    public ResponseEntity<String> changePassword(Map<String, String> requestMap) {
-        try {
-            return userService.changePassword(requestMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+@Override
+public ResponseEntity<String> changePassword(Map<String, String> requestMap) {
+    try {
+        // 呼叫 userService 的 changePassword 方法來更改密碼
+        return userService.changePassword(requestMap);
+    } catch (Exception e) {
+        // 如果發生異常，印出錯誤訊息
+        e.printStackTrace();
     }
+    // 如果發生錯誤，返回內部伺服器錯誤的回應
+    return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+}
 
-    @Override
-    public ResponseEntity<String> forgotPassword(Map<String, String> requestMap) {
-        try {
-            return userService.forgotPassword(requestMap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+@Override
+public ResponseEntity<String> forgotPassword(Map<String, String> requestMap) {
+    try {
+        // 呼叫 userService 的 forgotPassword 方法來處理忘記密碼邏輯
+        return userService.forgotPassword(requestMap);
+    } catch (Exception e) {
+        // 如果發生異常，印出錯誤訊息
+        e.printStackTrace();
     }
+    // 如果發生錯誤，返回內部伺服器錯誤的回應
+    return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+}
 }
