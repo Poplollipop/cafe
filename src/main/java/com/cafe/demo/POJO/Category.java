@@ -14,13 +14,16 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+// 定義命名查詢，查詢所有的 Category 實體
 @NamedQuery(name="Category.getAllCategory", query = "select c from Category c")
 
 @Data
 @Entity
+// 動態更新，表示在更新資料時只會更新實際改變的欄位
 @DynamicUpdate
 @DynamicInsert
 @Table(name = "category")
+// 序列化
 public class Category implements Serializable {
 
     @Id
