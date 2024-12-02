@@ -124,7 +124,6 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             // 驗證是否為管理員，如果不是管理員則返回未授權
             if (!jwtFilter.isAdmin()) {
-                System.out.println("Unauthorized: User is not an admin.");
                 return CafeUtils.getResponseEntity(CafeConstents.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
             }
             // 如果是管理員，繼續處理

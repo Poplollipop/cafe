@@ -1,6 +1,9 @@
 package com.cafe.demo.serviceImpl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +17,7 @@ import com.cafe.demo.constents.CafeConstents;
 import com.cafe.demo.dao.ProductDao;
 import com.cafe.demo.service.ProductService;
 import com.cafe.demo.utils.CafeUtils;
+import com.cafe.demo.wrapper.ProductWrapper;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -66,5 +70,40 @@ public class ProductServiceImpl implements ProductService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public ResponseEntity<List<ProductWrapper>> getAllProduct() {
+        try {
+            return new ResponseEntity<>(productDao.getAllProduct(), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<String> updateProduct(Map<String, String> requestMap) {
+        try {
+            if (!jwtFilter.isAdmin()) {
+                return CafeUtils.getResponseEntity(CafeConstents.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+            }
+            if (validateProductMap(requestMap, true)) {
+                Optional<Product> op = productDao.findById(Integer.parseInt(requestMap.get("id")));
+                if (!op.isEmpty()) {
+                    Product product = getProductFromMap(requestMap, true);
+                    product.setStatus(op.get().getStatus());
+                    productDao.save(product);
+                    return CafeUtils.getResponseEntity("產品更新成功！", HttpStatus.OK);
+                } else {
+                    return CafeUtils.getResponseEntity("產品id並不存在！", HttpStatus.OK);
+                }
+            } else {
+                return CafeUtils.getResponseEntity(CafeConstents.INVALID_DATA, HttpStatus.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
