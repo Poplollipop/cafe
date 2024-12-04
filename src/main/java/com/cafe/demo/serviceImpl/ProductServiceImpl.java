@@ -106,4 +106,24 @@ public class ProductServiceImpl implements ProductService {
         }
         return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @Override
+    public ResponseEntity<String> deleteProudct(Integer id) {
+        try {
+            if(!jwtFilter.isAdmin()){
+                return CafeUtils.getResponseEntity(CafeConstents.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+            }
+            if(jwtFilter.isAdmin()){
+                Optional op = productDao.findById(id);
+                if(!op.isEmpty()){
+                    productDao.deleteById(id);
+                    return CafeUtils.getResponseEntity("產品刪除成功！", HttpStatus.OK);
+                }
+                return CafeUtils.getResponseEntity("產品id並不存在",HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
