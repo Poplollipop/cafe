@@ -16,36 +16,38 @@
 ## 文件結構
 /src 
 ├── main 
-│ ├── java/com/cafe/demo
-│ │ 
-  ├── constents 
-  │ 
-  │ 
-  ├── dao 
-  │ 
-  │ 
-  ├── JWT 
-  │ 
-  │ 
-  ├── POJO 
-  │ 
-  │ 
-  ├── rest 
-  │ 
-  │ 
-  ├── restImpl 
-  │ 
-  │ 
-  ├── service 
-  │ 
-  │ 
-  ├── serviceImpl 
-  │ 
-  │ 
-  ├── utils 
-  │ 
-  │ 
-  └── wrapper
+│ 
+├── java/com/cafe/demo
+│ 
+│ 
+├── constents 
+│ 
+│ 
+├── dao 
+│ 
+│ 
+├── JWT 
+│ 
+│ 
+├── POJO 
+│ 
+│ 
+├── rest 
+│ 
+│ 
+├── restImpl 
+│ 
+│ 
+├── service 
+│ 
+│ 
+├── serviceImpl 
+│ 
+│ 
+├── utils 
+│ 
+│ 
+└── wrapper
 
   constents （常量資料夾）作用： 存放全局常量，即經常使用、不會改變的靜態值(static)。
   dao （資料訪問層）作用： 存放與數據庫交互的接口，通常使用 Spring Data JPA 提供的 Repository 接口。
