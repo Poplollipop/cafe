@@ -30,6 +30,26 @@ import lombok.Data;
                 " from Product p")
 
 @NamedQuery(name = "Product.updateProductStatus", query = "update Product p set p.status=:status where p.id= :id")
+/**
+ * 更新產品狀態的查詢
+ * 
+ * 這個查詢根據產品ID更新產品的狀態。參數`status`為新狀態，
+ * `id`為產品的ID。
+ */
+@NamedQuery(name = "Product.getProductByCategory", query = "select new com.cafe.demo.wrapper.ProductWrapper(p.id,p.name) from Product p where p.category.id=:id and p.status='true'")
+/**
+ * 根據類別ID取得產品的簡要資訊（ID與名稱）
+ * 
+ * 這個查詢根據產品的類別ID（`category.id`）和狀態為`'true'`來篩選
+ * 產品，並返回產品的ID和名稱，封裝在`ProductWrapper`中。
+ */
+@NamedQuery(name = "Product.getProductById", query = "select new com.cafe.demo.wrapper.ProductWrapper(p.id,p.name,p.description,p.price) from Product p where p.id=:id")
+/**
+ * 根據產品ID取得詳細的產品資訊
+ * 
+ * 這個查詢根據產品的ID篩選產品，並返回產品的ID、名稱、描述和價格，
+ * 封裝在`ProductWrapper`中。
+ */
 
 @Data
 @Entity
