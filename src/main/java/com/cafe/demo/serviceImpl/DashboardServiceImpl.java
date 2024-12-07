@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 import com.cafe.demo.dao.BillDao;
 import com.cafe.demo.dao.CategoryDao;
 import com.cafe.demo.dao.ProductDao;
-import com.cafe.demo.service.DashbordService;
+import com.cafe.demo.service.DashboardService;
 
 @Service
-public class DashbordServiceImpl implements DashbordService {
+public class DashboardServiceImpl implements DashboardService {
 
     @Autowired
     CategoryDao categoryDao;

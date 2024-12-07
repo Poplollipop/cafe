@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping(path = "dashboard")
-public interface DashbordRest {
+public interface DashboardRest {
     
     @GetMapping(path = "details")
     ResponseEntity<Map<String, Object>> getCount();
