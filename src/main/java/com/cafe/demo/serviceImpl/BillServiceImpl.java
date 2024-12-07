@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.apache.pdfbox.io.IOUtils;
@@ -14,6 +15,7 @@ import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
 import com.cafe.demo.JWT.JwtFilter;
@@ -230,6 +232,21 @@ public class BillServiceImpl implements BillService {
         byte[] byteArray = IOUtils.toByteArray(targetStream);
         targetStream.close();
         return byteArray;
+    }
+
+    @Override
+    public ResponseEntity<String> deleteBill(Integer id) {
+        try {
+            Optional op = billDao.findById(id);
+            if(!op.isEmpty()){
+                billDao.deleteById(id);
+                return CafeUtils.getResponseEntity("帳單刪除成功！", HttpStatus.OK);
+            }
+            return CafeUtils.getResponseEntity("無法找尋相對應的帳單id",HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
