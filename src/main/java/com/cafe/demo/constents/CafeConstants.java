@@ -8,6 +8,6 @@ public class CafeConstants {
 
     public static final String UNAUTHORIZED_ACCESS = "並未授權";
 
-    public static final String STORE_LOCATION = "c:\\Users\\jjj11\\Downloads";
+    public static final String STORE_LOCATION = "c:\\Users\\jjj11\\Downloads"; // 儲存位置(之後更改)
 
 }

@@ -37,31 +37,40 @@ public class BillRestImpl implements BillRest {
     @Override
     public ResponseEntity<List<Bill>> getBills() {
         try {
-        return billService.getBills();            
+            // 使用 BillService 的 getBills 方法來獲取帳單列表
+            return billService.getBills();
         } catch (Exception e) {
+            // 捕獲任何異常並印出信息
             e.printStackTrace();
         }
+        // 當發生異常時，返回空的 ResponseEntity
         return null;
     }
-
+    
     @Override
     public ResponseEntity<byte[]> getBillsPdf(Map<String, Object> requestMap) {
-       try {
-        return billService.getBillsPdf(requestMap);
-       } catch (Exception e) {
-        e.printStackTrace();
-       }
-           return null;
+        try {
+            // 使用 BillService 的 getBillsPdf 方法來生成帳單 PDF
+            return billService.getBillsPdf(requestMap);
+        } catch (Exception e) {
+            // 捕獲任何異常並印出信息
+            e.printStackTrace();
+        }
+        // 當發生異常時，返回空的 ResponseEntity
+        return null;
     }
-
+    
     @Override
     public ResponseEntity<String> deleteBill(Integer id) {
         try {
+            // 嘗試調用 BillService 的 deleteBill 方法來刪除指定的帳單
             return billService.deleteBill(id);
         } catch (Exception e) {
+            // 捕獲任何異常並印出信息
             e.printStackTrace();
         }
+        // 當發生異常時，返回錯誤信息，表示內部伺服器錯誤
         return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
+    
 }

@@ -194,59 +194,80 @@ public class BillServiceImpl implements BillService {
     @Override
     public ResponseEntity<List<Bill>> getBills() {
         List<Bill> list = new ArrayList<>();
+        // 判斷當前用戶是否為管理員
         if (jwtFilter.isAdmin()) {
+            // 如果是管理員，則獲取所有帳單
             list = billDao.getAllBills();
         } else {
+            // 否則根據當前用戶的名字獲取該用戶的帳單
             list = billDao.getBillsByUserName(jwtFilter.getCurrentUser());
         }
+        // 返回帳單列表，並設置狀態碼為 200 (OK)
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
-
+    
     @Override
     public ResponseEntity<byte[]> getBillsPdf(Map<String, Object> requestMap) {
         log.info("Inside getBillsPdf: requestMap{}" + requestMap);
         try {
             byte[] byteArray = new byte[0];
+            // 如果請求中不包含 "uid" 且驗證請求參數無誤，則返回 400 (Bad Request)
             if (!requestMap.containsKey("uid") && validateRequestMap(requestMap)) {
                 return new ResponseEntity<>(byteArray, HttpStatus.BAD_REQUEST);
             }
+            // 設置文件路徑
             String filePath = CafeConstants.STORE_LOCATION + "\\" + (String) requestMap.get("uid") + ".pdf";
+            // 檢查檔案是否已存在
             if (CafeUtils.isFileExist(filePath)) {
+                // 如果檔案存在，將檔案轉換為 byte array 並返回
                 byteArray = getByteArray(filePath);
                 return new ResponseEntity<>(byteArray, HttpStatus.OK);
             } else {
+                // 如果檔案不存在，標註 "isGenerated" 為 false，並生成報告
                 requestMap.put("isGenerated", false);
                 generateReport(requestMap);
+                // 生成報告後，將檔案轉換為 byte array 並返回
                 byteArray = getByteArray(filePath);
                 return new ResponseEntity<>(byteArray, HttpStatus.OK);
             }
         } catch (Exception e) {
+            // 捕獲異常並印出信息
             e.printStackTrace();
         }
+        // 如果發生錯誤，返回 null
         return null;
     }
-
+    
     private byte[] getByteArray(String filePath) throws Exception {
+        // 根據文件路徑創建文件對象
         File initialFile = new File(filePath);
+        // 創建輸入流讀取文件
         InputStream targetStream = new FileInputStream(initialFile);
+        // 使用 IOUtils 轉換為 byte array
         byte[] byteArray = IOUtils.toByteArray(targetStream);
+        // 關閉流
         targetStream.close();
         return byteArray;
     }
-
+    
     @Override
     public ResponseEntity<String> deleteBill(Integer id) {
         try {
+            // 根據 id 查找帳單
             Optional op = billDao.findById(id);
             if(!op.isEmpty()){
+                // 如果帳單存在，則刪除帳單並返回成功信息
                 billDao.deleteById(id);
                 return CafeUtils.getResponseEntity("帳單刪除成功！", HttpStatus.OK);
             }
-            return CafeUtils.getResponseEntity("無法找尋相對應的帳單id",HttpStatus.BAD_REQUEST);
+            // 如果帳單不存在，返回錯誤信息
+            return CafeUtils.getResponseEntity("無法找尋相對應的帳單id", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
+            // 捕獲異常並印出信息
             e.printStackTrace();
         }
+        // 發生錯誤時，返回內部伺服器錯誤信息
         return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
+    
 }
