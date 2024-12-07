@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cafe.demo.constents.CafeConstents;
+import com.cafe.demo.constents.CafeConstants;
 import com.cafe.demo.rest.ProductRest;
 import com.cafe.demo.service.ProductService;
 import com.cafe.demo.utils.CafeUtils;
@@ -38,7 +38,7 @@ public class ProductRestImpl implements ProductRest {
             e.printStackTrace();
         }
         // 若發生錯誤，返回內部伺服器錯誤訊息
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -71,7 +71,7 @@ public class ProductRestImpl implements ProductRest {
             e.printStackTrace();
         }
         // 若發生錯誤，返回內部伺服器錯誤訊息
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -88,7 +88,7 @@ public class ProductRestImpl implements ProductRest {
             e.printStackTrace();
         }
         // 若發生錯誤，返回內部伺服器錯誤訊息
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -105,7 +105,7 @@ public class ProductRestImpl implements ProductRest {
             e.printStackTrace();
         }
         // 若發生錯誤，返回內部伺服器錯誤訊息
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**

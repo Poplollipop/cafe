@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cafe.demo.POJO.Category;
-import com.cafe.demo.constents.CafeConstents;
+import com.cafe.demo.constents.CafeConstants;
 import com.cafe.demo.rest.CategoryRest;
 import com.cafe.demo.service.CategoryService;
 import com.cafe.demo.utils.CafeUtils;
@@ -33,7 +33,7 @@ public class CategoryRestImpl implements CategoryRest {
          }
  
          // 返回錯誤訊息，表示發生了錯誤
-         return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+         return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
      }
  
      // 實現 CategoryRest 中的 getAllCategory 方法
@@ -61,6 +61,6 @@ public class CategoryRestImpl implements CategoryRest {
              e.printStackTrace();
          }
          // 返回錯誤訊息，表示發生了錯誤
-         return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+         return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
      }
  }

@@ -1,6 +1,6 @@
 package com.cafe.demo.constents;
 
-public class CafeConstents {
+public class CafeConstants {
     
     public static final String SOME_THING_WENT_WRONG = "出現問題";
 

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.cafe.demo.JWT.JwtFilter;
 import com.cafe.demo.POJO.Category;
-import com.cafe.demo.constents.CafeConstents;
+import com.cafe.demo.constents.CafeConstants;
 import com.cafe.demo.dao.CategoryDao;
 import com.cafe.demo.service.CategoryService;
 import com.cafe.demo.utils.CafeUtils;
@@ -41,7 +41,7 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             // 驗證是否為管理員，如果不是管理員則返回未授權
             if (!jwtFilter.isAdmin()) {
-                return CafeUtils.getResponseEntity(CafeConstents.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+                return CafeUtils.getResponseEntity(CafeConstants.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
             }
             // 驗證資料是否正確
             if (validateCategoryMap(requestMap, false)) {
@@ -53,7 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
             e.printStackTrace();
         }
         // 如果發生錯誤，回傳錯誤訊息
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -124,7 +124,7 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             // 驗證是否為管理員，如果不是管理員則返回未授權
             if (!jwtFilter.isAdmin()) {
-                return CafeUtils.getResponseEntity(CafeConstents.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+                return CafeUtils.getResponseEntity(CafeConstants.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
             }
             // 如果是管理員，繼續處理
             if (jwtFilter.isAdmin()) {
@@ -142,13 +142,13 @@ public class CategoryServiceImpl implements CategoryService {
                     }
                 }
 
-                return CafeUtils.getResponseEntity(CafeConstents.INVALID_DATA, HttpStatus.BAD_REQUEST); // 資料無效
+                return CafeUtils.getResponseEntity(CafeConstants.INVALID_DATA, HttpStatus.BAD_REQUEST); // 資料無效
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         // 如果發生錯誤，回傳錯誤訊息
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

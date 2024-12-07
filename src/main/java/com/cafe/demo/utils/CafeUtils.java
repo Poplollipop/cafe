@@ -1,5 +1,6 @@
 package com.cafe.demo.utils;
 
+import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,9 @@ import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 // 定義一個工具類，用於返回自定義的 HTTP 回應
 public class CafeUtils {
 
@@ -57,4 +61,18 @@ public class CafeUtils {
         // 如果輸入字符串無效，返回一個空的 HashMap
         return new HashMap<>();
     }
+
+
+    
+    public static final Boolean isFileExist(String path){
+        log.info("Inside isFileExist {}", path);
+        try {
+            File file = new File(path);
+            return (file != null && file.exists()) ? Boolean.TRUE : Boolean.FALSE;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

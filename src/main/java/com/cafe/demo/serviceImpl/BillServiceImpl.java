@@ -1,9 +1,15 @@
 package com.cafe.demo.serviceImpl;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import org.apache.pdfbox.io.IOUtils;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.cafe.demo.JWT.JwtFilter;
 import com.cafe.demo.POJO.Bill;
-import com.cafe.demo.constents.CafeConstents;
+import com.cafe.demo.constents.CafeConstants;
 import com.cafe.demo.dao.BillDao;
 import com.cafe.demo.service.BillService;
 import com.cafe.demo.utils.CafeUtils;
@@ -32,7 +38,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Service // 標註此類別為 Service 類別，負責商業邏輯
+@Service // 標註此類別為 Service 類別
 public class BillServiceImpl implements BillService {
 
     @Autowired // 自動注入 JwtFilter 和 BillDao 類別
@@ -66,7 +72,7 @@ public class BillServiceImpl implements BillService {
                 // 創建 PDF 文檔並設置路徑
                 Document document = new Document();
                 PdfWriter.getInstance(document,
-                        new FileOutputStream(CafeConstents.STORE_LOCATION + "\\" + fillName + ".pdf"));
+                        new FileOutputStream(CafeConstants.STORE_LOCATION + "\\" + fillName + ".pdf"));
                 document.open();
                 setRectangleInPdf(document); // 設置 PDF 的矩形邊框
                 // 添加標題
@@ -100,7 +106,7 @@ public class BillServiceImpl implements BillService {
             e.printStackTrace(); // 輸出錯誤堆疊訊息
         }
         // 如果發生其他錯誤，返回內部伺服器錯誤
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     // 添加表格的每一行
@@ -118,7 +124,6 @@ public class BillServiceImpl implements BillService {
         log.info("Inside addTableHeader"); // 記錄日誌，表示進入方法
         Stream.of("Product Name", "Category", "Quantity", "Price", "Total Amount").forEach(columnTitle -> {
             PdfPCell header = new PdfPCell();
-            header.setBackgroundColor(BaseColor.LIGHT_GRAY); // 設置背景顏色
             header.setBorderWidth(2); // 設置邊框寬度
             header.setPhrase(new Phrase(columnTitle)); // 設置表頭內容
             header.setBackgroundColor(BaseColor.PINK); // 設置背景顏色
@@ -182,6 +187,49 @@ public class BillServiceImpl implements BillService {
                 && requestMap.containsKey("email")
                 && requestMap.containsKey("paymentMethod") && requestMap.containsKey("productDetails")
                 && requestMap.containsKey("totalAmount");
+    }
+
+    @Override
+    public ResponseEntity<List<Bill>> getBills() {
+        List<Bill> list = new ArrayList<>();
+        if (jwtFilter.isAdmin()) {
+            list = billDao.getAllBills();
+        } else {
+            list = billDao.getBillsByUserName(jwtFilter.getCurrentUser());
+        }
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<byte[]> getBillsPdf(Map<String, Object> requestMap) {
+        log.info("Inside getBillsPdf: requestMap{}" + requestMap);
+        try {
+            byte[] byteArray = new byte[0];
+            if (!requestMap.containsKey("uid") && validateRequestMap(requestMap)) {
+                return new ResponseEntity<>(byteArray, HttpStatus.BAD_REQUEST);
+            }
+            String filePath = CafeConstants.STORE_LOCATION + "\\" + (String) requestMap.get("uid") + ".pdf";
+            if (CafeUtils.isFileExist(filePath)) {
+                byteArray = getByteArray(filePath);
+                return new ResponseEntity<>(byteArray, HttpStatus.OK);
+            } else {
+                requestMap.put("isGenerated", false);
+                generateReport(requestMap);
+                byteArray = getByteArray(filePath);
+                return new ResponseEntity<>(byteArray, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private byte[] getByteArray(String filePath) throws Exception {
+        File initialFile = new File(filePath);
+        InputStream targetStream = new FileInputStream(initialFile);
+        byte[] byteArray = IOUtils.toByteArray(targetStream);
+        targetStream.close();
+        return byteArray;
     }
 
 }

@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import com.cafe.demo.JWT.JwtFilter;
 import com.cafe.demo.JWT.JwtUtils;
 import com.cafe.demo.POJO.User;
-import com.cafe.demo.constents.CafeConstents;
+import com.cafe.demo.constents.CafeConstants;
 import com.cafe.demo.dao.UserDao;
 import com.cafe.demo.service.CustomerUserDetailService;
 import com.cafe.demo.service.UserService;
@@ -77,13 +77,13 @@ public class UserServiceImpl implements UserService {
                 }
             } else {
                 // 如果請求資料不完整或無效，返回錯誤訊息
-                return CafeUtils.getResponseEntity(CafeConstents.INVALID_DATA, HttpStatus.BAD_REQUEST);
+                return CafeUtils.getResponseEntity(CafeConstants.INVALID_DATA, HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
             e.printStackTrace(); // 捕獲並打印錯誤訊息
         }
         // 如果發生未知錯誤，返回伺服器內部錯誤
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -195,14 +195,14 @@ public class UserServiceImpl implements UserService {
                 }
             } else {
                 // 如果當前用戶不是管理員，返回未授權響應
-                return CafeUtils.getResponseEntity(CafeConstents.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+                return CafeUtils.getResponseEntity(CafeConstants.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception e) {
             // 捕捉異常並打印堆疊資訊
             e.printStackTrace();
         }
         // 如果出現異常，返回伺服器內部錯誤
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -268,12 +268,12 @@ public class UserServiceImpl implements UserService {
             }
 
             // 如果找不到用戶，返回內部伺服器錯誤
-            return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+            return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             e.printStackTrace(); // 印出錯誤信息
         }
         // 如果發生異常，返回內部伺服器錯誤
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Override
@@ -292,7 +292,7 @@ public class UserServiceImpl implements UserService {
             e.printStackTrace(); // 印出錯誤信息
         }
         // 如果發生異常，返回內部伺服器錯誤
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

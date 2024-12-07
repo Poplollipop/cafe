@@ -1,5 +1,6 @@
 package com.cafe.demo.restImpl;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cafe.demo.constents.CafeConstents;
+import com.cafe.demo.POJO.Bill;
+import com.cafe.demo.constents.CafeConstants;
 import com.cafe.demo.rest.BillRest;
 import com.cafe.demo.service.BillService;
 import com.cafe.demo.utils.CafeUtils;
@@ -29,7 +31,27 @@ public class BillRestImpl implements BillRest {
         e.printStackTrace();
        }
        // 若有錯誤，回傳自定義錯誤訊息及 500 內部伺服器錯誤狀態
-       return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+       return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResponseEntity<List<Bill>> getBills() {
+        try {
+        return billService.getBills();            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<byte[]> getBillsPdf(Map<String, Object> requestMap) {
+       try {
+        return billService.getBillsPdf(requestMap);
+       } catch (Exception e) {
+        e.printStackTrace();
+       }
+           return null;
     }
 
 }

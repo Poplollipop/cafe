@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import com.cafe.demo.JWT.JwtFilter;
 import com.cafe.demo.POJO.Category;
 import com.cafe.demo.POJO.Product;
-import com.cafe.demo.constents.CafeConstents;
+import com.cafe.demo.constents.CafeConstants;
 import com.cafe.demo.dao.ProductDao;
 import com.cafe.demo.service.ProductService;
 import com.cafe.demo.utils.CafeUtils;
@@ -39,7 +39,7 @@ public class ProductServiceImpl implements ProductService {
         try {
             // 檢查是否為管理員
             if (!jwtFilter.isAdmin()) {
-                return CafeUtils.getResponseEntity(CafeConstents.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+                return CafeUtils.getResponseEntity(CafeConstants.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
             }
             // 驗證產品資料
             if (validateProductMap(requestMap, false)) {
@@ -47,11 +47,11 @@ public class ProductServiceImpl implements ProductService {
                 productDao.save(getProductFromMap(requestMap, false));
                 return CafeUtils.getResponseEntity("產品新增成功！", HttpStatus.OK);
             }
-            return CafeUtils.getResponseEntity(CafeConstents.INVALID_DATA, HttpStatus.BAD_REQUEST);
+            return CafeUtils.getResponseEntity(CafeConstants.INVALID_DATA, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -121,7 +121,7 @@ public class ProductServiceImpl implements ProductService {
         try {
             // 檢查是否為管理員
             if (!jwtFilter.isAdmin()) {
-                return CafeUtils.getResponseEntity(CafeConstents.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+                return CafeUtils.getResponseEntity(CafeConstants.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
             }
             // 驗證資料
             if (validateProductMap(requestMap, true)) {
@@ -135,12 +135,12 @@ public class ProductServiceImpl implements ProductService {
                     return CafeUtils.getResponseEntity("產品id並不存在！", HttpStatus.OK);
                 }
             } else {
-                return CafeUtils.getResponseEntity(CafeConstents.INVALID_DATA, HttpStatus.BAD_REQUEST);
+                return CafeUtils.getResponseEntity(CafeConstants.INVALID_DATA, HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -154,7 +154,7 @@ public class ProductServiceImpl implements ProductService {
         try {
             // 檢查是否為管理員
             if (!jwtFilter.isAdmin()) {
-                return CafeUtils.getResponseEntity(CafeConstents.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+                return CafeUtils.getResponseEntity(CafeConstants.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
             }
             // 確認產品存在後刪除
             Optional op = productDao.findById(id);
@@ -166,7 +166,7 @@ public class ProductServiceImpl implements ProductService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -180,7 +180,7 @@ public class ProductServiceImpl implements ProductService {
         try {
             // 檢查是否為管理員
             if (!jwtFilter.isAdmin()) {
-                return CafeUtils.getResponseEntity(CafeConstents.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
+                return CafeUtils.getResponseEntity(CafeConstants.UNAUTHORIZED_ACCESS, HttpStatus.UNAUTHORIZED);
             }
             // 確認產品存在並更新狀態
             Optional op = productDao.findById(Integer.parseInt(requestMap.get("id")));
@@ -192,7 +192,7 @@ public class ProductServiceImpl implements ProductService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return CafeUtils.getResponseEntity(CafeConstents.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
+        return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
