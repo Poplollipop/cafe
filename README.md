@@ -14,40 +14,20 @@
 3. 啟動前端：進入 `/angular` 目錄，執行 `ng serve`
 
 ## 文件結構
-/src 
-├── main 
-│ 
-├── java/com/cafe/demo
-│ 
-│ 
-├── constents 
-│ 
-│ 
-├── dao 
-│ 
-│ 
-├── JWT 
-│ 
-│ 
-├── POJO 
-│ 
-│ 
-├── rest 
-│ 
-│ 
-├── restImpl 
-│ 
-│ 
-├── service 
-│ 
-│ 
-├── serviceImpl 
-│ 
-│ 
-├── utils 
-│ 
-│ 
-└── wrapper
+/src
+├── main
+│   └── java/com/cafe/demo
+│       ├── constents
+│       ├── dao
+│       ├── JWT
+│       ├── POJO
+│       ├── rest
+│       ├── restImpl
+│       ├── service
+│       ├── serviceImpl
+│       ├── utils
+│       └── wrapper
+
 
 ## 文件解釋
   constents （常量資料夾）作用： 存放全局常量，即經常使用、不會改變的靜態值(static)。
