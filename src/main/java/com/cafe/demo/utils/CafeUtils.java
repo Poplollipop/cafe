@@ -1,12 +1,21 @@
 package com.cafe.demo.utils;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import com.google.common.base.Strings;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 // 定義一個工具類，用於返回自定義的 HTTP 回應
 public class CafeUtils {
 
-    
     private CafeUtils() {
 
     }
@@ -18,4 +27,32 @@ public class CafeUtils {
         return new ResponseEntity<String>("{\"message\":\"" + responseMessage + "\"}", httpStatus);
     }
 
+    public static String getUID() {
+        Date date = new Date();
+        long time = date.getTime();
+        return "帳單-" + time;
+    }
+
+    public static JSONArray getArrayFromString(String data) throws JSONException {
+        JSONArray jsonArray = new JSONArray(data);
+        return jsonArray;
+    }
+
+    /**
+     * 將 JSON 字符串轉換為 Map 結構。
+     * 如果輸入的字符串為空或 null，則返回一個空的 HashMap。
+     *
+     * @param data 輸入的 JSON 字符串
+     * @return 轉換後的 Map<String, Object> 結構，如果字符串為空，返回空的 HashMap
+     */
+    public static Map<String, Object> getMapFromJson(String data) {
+        // 檢查輸入的字符串是否為 null 或空字符串
+        if (!Strings.isNullOrEmpty(data)) {
+            // 使用 Gson 解析 JSON 並轉換為 Map<String, Object>
+            return new Gson().fromJson(data, new TypeToken<Map<String, Object>>() {
+            }.getType());
+        }
+        // 如果輸入字符串無效，返回一個空的 HashMap
+        return new HashMap<>();
+    }
 }
