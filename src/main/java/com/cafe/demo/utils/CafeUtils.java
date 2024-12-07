@@ -27,15 +27,17 @@ public class CafeUtils {
         return new ResponseEntity<String>("{\"message\":\"" + responseMessage + "\"}", httpStatus);
     }
 
+    // 生成唯一的 UID，基於當前的時間戳
     public static String getUID() {
-        Date date = new Date();
-        long time = date.getTime();
-        return "帳單-" + time;
+        Date date = new Date(); // 獲取當前日期時間
+        long time = date.getTime(); // 獲取當前時間戳（自1970年以來的毫秒數）
+        return "帳單-" + time; // 返回格式化的 UID
     }
 
+    // 將字符串格式的 JSON 轉換為 JSONArray
     public static JSONArray getArrayFromString(String data) throws JSONException {
-        JSONArray jsonArray = new JSONArray(data);
-        return jsonArray;
+        JSONArray jsonArray = new JSONArray(data); // 將字符串轉換為 JSON 陣列
+        return jsonArray; // 返回 JSONArray
     }
 
     /**
