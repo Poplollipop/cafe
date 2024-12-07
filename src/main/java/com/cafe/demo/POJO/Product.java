@@ -18,18 +18,18 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @NamedQuery(
-    // 定義查詢名稱，方便在代碼中直接使用
-    name = "Product.getAllProduct",
-    // JPQL 查詢語句，返回一個 DTO 類型（ProductWrapper）的結果
-    query = "select new com.cafe.demo.wrapper.ProductWrapper(" +
-            // 選取的字段：Product 實體的屬性和關聯屬性
-            " p.id, p.name, p.description, p.price, p.status, " +
-            " p.category.id, p.category.name" +
-            " ) " +
-            // 查詢的實體來源
-            " from Product p"
-)
+        // 定義查詢名稱，方便在代碼中直接使用
+        name = "Product.getAllProduct",
+        // JPQL 查詢語句，返回一個 DTO 類型（ProductWrapper）的結果
+        query = "select new com.cafe.demo.wrapper.ProductWrapper(" +
+        // 選取的字段：Product 實體的屬性和關聯屬性
+                " p.id, p.name, p.description, p.price, p.status, " +
+                " p.category.id, p.category.name" +
+                " ) " +
+                // 查詢的實體來源
+                " from Product p")
 
+@NamedQuery(name = "Product.updateProductStatus", query = "update Product p set p.status=:status where p.id= :id")
 
 @Data
 @Entity
