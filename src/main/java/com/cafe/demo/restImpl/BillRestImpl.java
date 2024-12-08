@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cafe.demo.POJO.Bill;
@@ -14,6 +15,7 @@ import com.cafe.demo.rest.BillRest;
 import com.cafe.demo.service.BillService;
 import com.cafe.demo.utils.CafeUtils;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController  // 標註為 REST 控制器
 public class BillRestImpl implements BillRest {
 

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cafe.demo.constents.CafeConstants;
@@ -18,6 +19,7 @@ import com.cafe.demo.wrapper.ProductWrapper;
 /**
  * ProductRestImpl類別，實現ProductRest介面，提供產品管理的具體操作
  */
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class ProductRestImpl implements ProductRest {
 

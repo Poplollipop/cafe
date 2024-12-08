@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cafe.demo.JWT.JwtFilter;
@@ -18,6 +19,8 @@ import com.cafe.demo.service.UserService; // 引入UserService服務，用於處
 import com.cafe.demo.utils.CafeUtils; // 引入工具類，用於公共方法和返回格式處理
 import com.cafe.demo.wrapper.UserWrapper;
 
+
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController // 標註此類為REST控制器，讓Spring能自動識別並處理HTTP請求
 public class UserRestImpl implements UserRest { // 實現UserRest接口，具體處理用戶註冊功能
 
