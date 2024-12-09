@@ -33,6 +33,7 @@ import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -66,10 +67,10 @@ public class BillServiceImpl implements BillService {
                     insertBill(requestMap); // 插入帳單資料
                 }
                 // 準備資料以生成報告
-                String data = "Customer Name: " + requestMap.get("name") + "\n" +
-                        "Contact Number: " + requestMap.get("contactNumber") + "\n" +
+                String data = "顧客名稱: " + requestMap.get("name") + "\n" +
+                        "聯絡電話: " + requestMap.get("contactNumber") + "\n" +
                         "Email: " + requestMap.get("email") + "\n" +
-                        "Payment Method: " + requestMap.get("paymentMethod");
+                        "付款方式: " + requestMap.get("paymentMethod");
 
                 // 創建 PDF 文檔並設置路徑
                 Document document = new Document();
@@ -78,7 +79,7 @@ public class BillServiceImpl implements BillService {
                 document.open();
                 setRectangleInPdf(document); // 設置 PDF 的矩形邊框
                 // 添加標題
-                Paragraph par = new Paragraph("Coffee Order Management System", getFont("Header"));
+                Paragraph par = new Paragraph("咖啡廳訂單系統", getFont("Header"));
                 par.setAlignment(Element.ALIGN_CENTER);
                 document.add(par);
                 // 添加訂單資料
@@ -95,8 +96,8 @@ public class BillServiceImpl implements BillService {
                 document.add(table);
 
                 // 添加頁腳
-                Paragraph footer = new Paragraph("Total: " + requestMap.get("totalAmount") + "\n" +
-                        "Thank you for visiting, we hope to meet again!", getFont("Data"));
+                Paragraph footer = new Paragraph("總金額: " + requestMap.get("totalAmount") + "\n" +
+                        "感謝您的下訂，我們盡快幫您準備！", getFont("Data"));
                 document.add(footer);
                 document.close();
                 // 返回生成報告的 UID
@@ -114,20 +115,22 @@ public class BillServiceImpl implements BillService {
     // 添加表格的每一行
     private void addRows(PdfPTable table, Map<String, Object> data) {
         log.info("Inside addRows"); // 記錄日誌，表示進入方法
-        table.addCell((String) data.get("name"));
-        table.addCell((String) data.get("category"));
-        table.addCell((String) data.get("quantity"));
-        table.addCell(Double.toString((Double) data.get("price")));
-        table.addCell((Double.toString((Double) data.get("total"))));
+        Font dataFont = getFont("Data");
+        table.addCell(new PdfPCell(new Phrase(data.get("name").toString(), dataFont)));
+        table.addCell(new PdfPCell(new Phrase(data.get("category").toString(), dataFont)));
+        table.addCell(new PdfPCell(new Phrase(data.get("quantity").toString(), dataFont)));
+        table.addCell(new PdfPCell(new Phrase(String.valueOf(data.get("price")), dataFont)));
+        table.addCell(new PdfPCell(new Phrase(String.valueOf(data.get("total")), dataFont)));
     }
 
     // 添加表格的表頭
     private void addTableHeader(PdfPTable table) {
         log.info("Inside addTableHeader"); // 記錄日誌，表示進入方法
-        Stream.of("Product Name", "Category", "Quantity", "Price", "Total Amount").forEach(columnTitle -> {
+        Font headerFont = getFont("Data");
+        Stream.of("產品名稱", "類別", "數量", "價格", "總金額").forEach(columnTitle -> {
             PdfPCell header = new PdfPCell();
             header.setBorderWidth(2); // 設置邊框寬度
-            header.setPhrase(new Phrase(columnTitle)); // 設置表頭內容
+            header.setPhrase(new Phrase(columnTitle, headerFont)); // 設置表頭內容
             header.setBackgroundColor(BaseColor.PINK); // 設置背景顏色
             header.setHorizontalAlignment(Element.ALIGN_CENTER); // 設置水平對齊
             header.setVerticalAlignment(Element.ALIGN_CENTER); // 設置垂直對齊
@@ -138,17 +141,23 @@ public class BillServiceImpl implements BillService {
     // 根據類型返回字體
     private Font getFont(String type) {
         log.info("Inside getFont"); // 記錄日誌，表示進入方法
-        switch (type) {
-            case "Header":
-                Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLDOBLIQUE, 18, BaseColor.BLACK);
-                headerFont.setStyle(Font.BOLD);
-                return headerFont;
-            case "Data":
-                Font dataFont = FontFactory.getFont(FontFactory.TIMES_ROMAN, 11, BaseColor.BLACK);
-                dataFont.setStyle(Font.BOLD);
-                return dataFont;
-            default:
-                return new Font();
+        try {
+            // 指定字體的完整路徑
+            String fontPath = "C:/Windows/Fonts/msyh.ttc"; // 使用微軟雅黑
+            // Windows 路径: C:/Windows/Fonts/msyh.ttc
+            // Mac 路径: /Library/Fonts/Microsoft/msyh.ttc
+            BaseFont baseFont = BaseFont.createFont(fontPath + ",0", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            switch (type) {
+                case "Header":
+                    return new Font(baseFont, 18, Font.BOLD, BaseColor.BLACK);
+                case "Data":
+                    return new Font(baseFont, 11, Font.NORMAL, BaseColor.BLACK);
+                default:
+                    return new Font(baseFont, 12, Font.NORMAL, BaseColor.BLACK);
+            }
+        } catch (Exception e) {
+            log.error("Error while creating font: " + e.getMessage(), e);
+            return new Font(); // 返回默認字型
         }
     }
 
@@ -205,7 +214,7 @@ public class BillServiceImpl implements BillService {
         // 返回帳單列表，並設置狀態碼為 200 (OK)
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
-    
+
     @Override
     public ResponseEntity<byte[]> getBillsPdf(Map<String, Object> requestMap) {
         log.info("Inside getBillsPdf: requestMap{}" + requestMap);
@@ -237,11 +246,11 @@ public class BillServiceImpl implements BillService {
         // 如果發生錯誤，返回 null
         return null;
     }
-    
+
     private byte[] getByteArray(String filePath) throws Exception {
         // 根據文件路徑創建文件對象
         File initialFile = new File(filePath);
-        // 創建輸入流讀取文件
+        // 創建輸入讀取文件
         InputStream targetStream = new FileInputStream(initialFile);
         // 使用 IOUtils 轉換為 byte array
         byte[] byteArray = IOUtils.toByteArray(targetStream);
@@ -249,13 +258,13 @@ public class BillServiceImpl implements BillService {
         targetStream.close();
         return byteArray;
     }
-    
+
     @Override
     public ResponseEntity<String> deleteBill(Integer id) {
         try {
             // 根據 id 查找帳單
             Optional op = billDao.findById(id);
-            if(!op.isEmpty()){
+            if (!op.isEmpty()) {
                 // 如果帳單存在，則刪除帳單並返回成功信息
                 billDao.deleteById(id);
                 return CafeUtils.getResponseEntity("帳單刪除成功！", HttpStatus.OK);
@@ -269,5 +278,5 @@ public class BillServiceImpl implements BillService {
         // 發生錯誤時，返回內部伺服器錯誤信息
         return CafeUtils.getResponseEntity(CafeConstants.SOME_THING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    
+
 }
