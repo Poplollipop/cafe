@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
@@ -77,7 +76,7 @@ public class EmailUtils {
     public void forgotMail(String to , String subject, String password) throws MessagingException{
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
-        helper.setFrom("aaa111334@gmail.com");
+        helper.setFrom("@gmail.com"); //設定寄件人
         helper.setTo(to);
         helper.setSubject(subject);
         String htmlMsg = "<p><b> 以下是你於管理系統內的登入資訊</b><br><b>Email: </b> " + to + "<br><b>密碼: </b> " + password + "<br><a href=\"http://localhost:4200/\">點擊此登入</a></p>";
