@@ -34,7 +34,7 @@ public class EmailUtils {
         SimpleMailMessage message = new SimpleMailMessage();
 
         // 設置發件人郵箱地址（需要與 spring.mail.username 相同）
-        message.setFrom("");
+        message.setFrom("testforcode1210@gmail.com");
 
         // 設置收件人
         message.setTo(to);
