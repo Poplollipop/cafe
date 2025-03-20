@@ -3,7 +3,7 @@
 ## 專案簡介
 一個基於 Spring Boot 和 Angular 的咖啡廳管理系統，提供產品管理、訂單處理和使用者管理功能。
 
-## 技術棧
+## 技術
 - **後端**: Java Spring Boot
 - **前端**: Angular
 - **數據庫**: MySQL
@@ -11,9 +11,10 @@
 ## 啟動指南
 1. 安裝所需依賴：`mvn install`
 2. 啟動後端：`mvn spring-boot:run`
-3. 啟動前端：進入 `/angular` 目錄，執行 `ng serve`
+
 
 ## 文件結構
+```
 /src
 ├── main
 │   └── java/com/cafe/demo
@@ -27,7 +28,7 @@
 │       ├── serviceImpl
 │       ├── utils
 │       └── wrapper
-
+```
 
 ## 文件解釋
   1. constents （常量資料夾）作用： 存放全局常量，即經常使用、不會改變的靜態值(static)。
